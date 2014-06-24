@@ -11,6 +11,8 @@ public class SensorSenderThread implements Runnable
 	private int sensorType;
 	private int sensorSleepTime;
 	private int sensorCount;
+	private byte[] FrameSensor = new byte[2];
+	private int Status;
 	private Socket socket;
 	private OutputStream outputStream;
 	
@@ -64,11 +66,19 @@ public class SensorSenderThread implements Runnable
 		sensorCount++;
 		try 
 		{
-			String message = "{count:" + SingletonSignalCounter.getInstance().incrementCounter() + ",sensorNotification:" + this.toString() + "}";
-			System.out.println(message);
+			//Estructura de trama FrameSensor |ID.sensor Byte[1]||Status,TypeSensor Byte[0]|
+			//String message = "{count:" + SingletonSignalCounter.getInstance().incrementCounter() + ",sensorNotification:" + this.toString() + "}";
+			//System.out.println(message);
+	    	
+	    	Status=(int)(Math.random()*2);
+	    	
+	    	FrameSensor[1] = (byte)sensorId;
+	    	FrameSensor[0] = (byte)((Status*2)+(sensorType));
+	    	
+	    	System.out.println("byte "+FrameSensor[1]+FrameSensor[0]+" S: "+Status+" C:" + SingletonSignalCounter.getInstance().incrementCounter());
 			socket = new Socket(propertyIP, propertyPort);
 			outputStream = socket.getOutputStream();
-			outputStream.write(message.getBytes());
+			outputStream.write(FrameSensor);
 			outputStream.close();
 			socket.close();
 		} 
@@ -83,4 +93,5 @@ public class SensorSenderThread implements Runnable
 	{
 		return "{sensorId:" + sensorId + ",sensorType:" + sensorType + ",sensorCount:" + sensorCount + ",sensorSleepTime:" + sensorSleepTime + "}";
 	}
+
 }
