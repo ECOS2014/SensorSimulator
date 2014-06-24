@@ -2,6 +2,7 @@ package uniandes.sensorsimulator.world;
 
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Random;
 
 public class SensorSenderThread implements Runnable 
 {
@@ -69,8 +70,8 @@ public class SensorSenderThread implements Runnable
 			//Estructura de trama FrameSensor |ID.sensor Byte[1]||Status,TypeSensor Byte[0]|
 			//String message = "{count:" + SingletonSignalCounter.getInstance().incrementCounter() + ",sensorNotification:" + this.toString() + "}";
 			//System.out.println(message);
-	    	
-	    	Status=(int)(Math.random()*2);
+	    	Random random = new Random();
+	    	Status=(int)(random.nextInt(2));
 	    	
 	    	FrameSensor[1] = (byte)sensorId;
 	    	FrameSensor[0] = (byte)((Status*2)+(sensorType));
