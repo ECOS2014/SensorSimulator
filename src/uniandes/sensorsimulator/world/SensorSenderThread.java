@@ -77,7 +77,7 @@ public class SensorSenderThread implements Runnable
 	    	FrameSensor[1] = (byte)sensorId;
 	    	FrameSensor[0] = (byte)((Status*2)+(sensorType));
 	    	numberThreads = SingletonSignalCounter.getInstance().incrementCounter();
-	    	System.out.println("Total de hilos generados: "+numberThreads + " Numero de hilos en la casa: "+numberThreads );
+	    	//System.out.println("Total de hilos generados: "+numberThreads + " Numero de hilos en la casa: "+numberThreads );
 			socket = new Socket(propertyIP, propertyPort);
 			outputStream = socket.getOutputStream();
 			outputStream.write(FrameSensor);
