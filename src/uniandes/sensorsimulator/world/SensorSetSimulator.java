@@ -102,6 +102,7 @@ public class SensorSetSimulator extends JFrame
 		else
 		{
 			sss = new SensorSetSimulator();
+			sss.setVisible(false);
 			sss.setTitle("Sensor, no properties were found");
 		}
 		
