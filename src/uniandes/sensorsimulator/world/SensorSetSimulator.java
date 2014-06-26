@@ -4,8 +4,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class SensorSetSimulator 
+import javax.swing.JFrame;
+
+public class SensorSetSimulator extends JFrame
 {
+	private static final long serialVersionUID = 1L;
 	private static final String CONFIG_FILE_PATH = "./data/config.properties";
 	
 	private static final String KEY_HOUSE_IP = "houseIP";
@@ -21,6 +24,11 @@ public class SensorSetSimulator
 	{
 		Properties properties = loadProperties();
 		createSensorsThreads(properties);
+	}
+
+	public SensorSetSimulator(String propertyIP, int propertyPort) {
+		Properties properties = loadProperties();
+		createSensorsThreads(properties, propertyIP, propertyPort);
 	}
 
 	private Properties loadProperties() 
@@ -44,11 +52,16 @@ public class SensorSetSimulator
 	
 	private void createSensorsThreads(Properties properties) 
 	{
-		String houseIP = properties.getProperty(KEY_HOUSE_IP);
+		String propertyIP = properties.getProperty(KEY_HOUSE_IP);
 		
-		String strHousePort = properties.getProperty(KEY_HOUSE_PORT);
-		int housePort = Integer.parseInt(strHousePort);
+		String strPropertyPort = properties.getProperty(KEY_HOUSE_PORT);
+		int propertyPort = Integer.parseInt(strPropertyPort);
 		
+		createSensorsThreads(properties, propertyIP, propertyPort);
+	}
+	
+	private void createSensorsThreads(Properties properties, String propertyIP,	int propertyPort) 
+	{
 		String strTotalSensors = properties.getProperty(KEY_TOTAL_SENSORS);
 		int totalSensors = Integer.parseInt(strTotalSensors);
 		
@@ -66,7 +79,7 @@ public class SensorSetSimulator
 			String keyMaxDeliveries = KEY_SENSOR + i + "." + KEY_MAX_DELIVERIES;
 			int maxDeliveries = Integer.parseInt(properties.getProperty(keyMaxDeliveries));
 			
-			Thread sensorThread = new Thread(new SensorSenderThread(id, type, sleepTime, maxDeliveries, houseIP, housePort));
+			Thread sensorThread = new Thread(new SensorSenderThread(id, type, sleepTime, maxDeliveries, propertyIP, propertyPort));
 			sensorThread.setDaemon(false);
 			sensorThread.start();
 			System.out.println("Starting thread " + sensorThread.toString());
@@ -75,6 +88,25 @@ public class SensorSetSimulator
 
 	public static void main(String[] args)
 	{
-		new SensorSetSimulator();
+		SensorSetSimulator sss = null;
+		
+		
+		if (args.length == 2)
+		{
+			String propertyIP = args[0];
+			String strPropertyPort = args[1];
+			int propertyPort = Integer.parseInt(strPropertyPort);
+			sss = new SensorSetSimulator(propertyIP, propertyPort);
+			sss.setTitle("Sensor from property at " + propertyIP + ":" + propertyPort);	
+		}
+		else
+		{
+			sss = new SensorSetSimulator();
+			sss.setTitle("Sensor, no properties were found");
+		}
+		
+		sss.setSize(500,100);
+		sss.setVisible(true);
+		sss.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 }
