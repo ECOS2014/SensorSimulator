@@ -1,7 +1,9 @@
 package uniandes.sensorsimulator.world;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Random;
 
 public class SensorSenderThread implements Runnable 
@@ -34,6 +36,8 @@ public class SensorSenderThread implements Runnable
 	@Override
 	public void run() 
 	{
+		initSocket();
+		
 		while (isEnableToRun())
 		{
 			sendSignal();
@@ -46,6 +50,19 @@ public class SensorSenderThread implements Runnable
 		}
 	}
 	
+	private void initSocket() 
+	{
+		try 
+		{
+			socket = new Socket(propertyIP, propertyPort);
+			outputStream = socket.getOutputStream();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+
 	private boolean isEnableToRun() 
 	{
 		boolean enableToRun = false;
@@ -64,7 +81,6 @@ public class SensorSenderThread implements Runnable
 
 	public void sendSignal()
 	{
-		int numberThreads;
 		sensorCount++;
 		try 
 		{
@@ -76,13 +92,10 @@ public class SensorSenderThread implements Runnable
 	    	
 	    	FrameSensor[1] = (byte)sensorId;
 	    	FrameSensor[0] = (byte)((Status*2)+(sensorType));
-	    	numberThreads = SingletonSignalCounter.getInstance().incrementCounter();
-	    	//System.out.println("Total de hilos generados: "+numberThreads + " Numero de hilos en la casa: "+numberThreads );
-			socket = new Socket(propertyIP, propertyPort);
-			outputStream = socket.getOutputStream();
-			outputStream.write(FrameSensor);
-			outputStream.close();
-			socket.close();
+	    	
+	    	outputStream.write(FrameSensor);
+	    	System.out.println("Total de eventos enviados por sensor " + sensorId + ": " + sensorCount);
+	    	System.out.println("Total de eventos enviados: " + SingletonSignalCounter.getInstance().incrementCounter());
 		} 
 		catch (Exception e) 
 		{
