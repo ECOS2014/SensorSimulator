@@ -1,2 +1,4 @@
 *.class
 config.properties
+data/config.properties
+*.properties
