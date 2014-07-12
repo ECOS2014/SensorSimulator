@@ -2,3 +2,4 @@
 config.properties
 data/config.properties
 *.properties
+data/config.properties
